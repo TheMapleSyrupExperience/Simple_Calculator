@@ -118,7 +118,7 @@ public partial class App : Application
                         case '^':
                             double exponentResponse = operationOperands[0];
 
-                            for (int i = 1; i <= operationOperands[1]; i++)
+                            for (int i = 1; i < operationOperands[1]; i++)
                             {
                                 exponentResponse =+ exponentResponse * operationOperands[0];
                             }
@@ -129,27 +129,27 @@ public partial class App : Application
                             break;
 
                         case '*':
-                            currentAnswer = operationOperands[1] * operationOperands[0];
+                            currentAnswer = operationOperands[0] * operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;
                             break;
 
                         case '/':
-                            currentAnswer = operationOperands[1] / operationOperands[0];
+                            currentAnswer = operationOperands[0] / operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;
 
                             break;
 
                         case '+':
-                            currentAnswer = operationOperands[1] + operationOperands[0];
+                            currentAnswer = operationOperands[0] + operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;
                             
                             break;
 
                         case '-':
-                            currentAnswer = operationOperands[1] - operationOperands[0];
+                            currentAnswer = operationOperands[0] - operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;                           
                             break;
