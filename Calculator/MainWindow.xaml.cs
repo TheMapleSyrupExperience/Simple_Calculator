@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     Stack<char> completeExpression = new Stack<char>();
     Queue<char> currentInput = new Queue<char>();
     Boolean answerFlag = false;
+    double lastAnswer = 0;
     private void one_Click(object sender, RoutedEventArgs e)
     {
 
@@ -121,7 +122,18 @@ public partial class MainWindow : Window
             }
             try
             {
-                calculatorInput.Text = Convert.ToString(App.input_parsing(completeExpression));
+                
+                lastAnswer = App.input_parsing(completeExpression);
+                
+                if (App.Answer_Formatter(lastAnswer))
+                {
+                    calculatorInput.Text = lastAnswer.ToString();
+                }
+                else
+                {
+                    calculatorInput.Text = lastAnswer.ToString("e2");
+                }
+                                 
             }
             catch (InvalidOperationException)
             {

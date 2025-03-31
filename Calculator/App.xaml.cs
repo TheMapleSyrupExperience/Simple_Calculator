@@ -163,5 +163,26 @@ public partial class App : Application
         finalAnswer = operands.Pop();
         return finalAnswer;
     }
+
+    static public bool Answer_Formatter(double calculationAnswer)
+    {
+        long integerPart = (long) calculationAnswer;
+        double decimalPart = calculationAnswer - integerPart;
+
+        string evaluativeInteger = integerPart.ToString();
+        string evaluativeDecimal = decimalPart.ToString();
+
+        if (evaluativeDecimal.Length - 1 + evaluativeInteger.Length < 11)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+            
+
+    }
+
 }   
       
