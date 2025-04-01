@@ -28,7 +28,7 @@ public partial class App : Application
 
         while (userInput.Count() != 0) //first we perform the shunting yard algorithm with the help of our key-value dictionary
        {
-            if (char.IsNumber(userInput.Peek()) | userInput.Peek() == '.') // I've added in a decimal case, but I haven't implemented these as I'm not sure how to go about it
+            if (char.IsNumber(userInput.Peek()) | userInput.Peek() == '.' | userInput.Peek() == '~') // tilde denotes a sign change
             {
                 parsedInput.Enqueue(userInput.Pop());
             }
@@ -64,50 +64,61 @@ public partial class App : Application
 
     static private double Calc_Logic(Queue<char> parsedExpression)
     {
- 
+        
         double finalAnswer = 0;
+        double convertedStackNumber = 0;
         Stack<double> operands = new Stack<double>();
 
         while (parsedExpression.Count() != 0)
         {
+            string currentInteger = "";
+            Stack<char> reversingNumber = new Stack<char>();
+            int signCount = 0;
 
-            switch (char.IsNumber(parsedExpression.Peek()))
+            if(char.IsNumber(parsedExpression.Peek()) | parsedExpression.Peek() == '~')
             {
-
-                case true:
-                    
-                    string currentInteger = "";
-                    Stack<char> reversingNumber = new Stack<char>();
-                    do
+                do
+                {
+                    if (parsedExpression.Peek() != '~')
                     {
-                            reversingNumber.Push(parsedExpression.Dequeue());  
+                        reversingNumber.Push(parsedExpression.Dequeue());
                     }
-                    while (char.IsNumber(parsedExpression.Peek()) | parsedExpression.Peek() == '.');
-
-                    if (parsedExpression.Peek() == '\0')
+                    else
                     {
                         parsedExpression.Dequeue();
+                        signCount++;
                     }
+                }
+                while (char.IsNumber(parsedExpression.Peek()) | parsedExpression.Peek() == '.'| parsedExpression.Peek() == '~');
+                if (parsedExpression.Peek() == '\0')
+                {
+                    parsedExpression.Dequeue();
+                }
 
-                    while (reversingNumber.Count() != 0)
+                while (reversingNumber.Count() != 0)
+                {
+                    if (reversingNumber.Peek() != '.')
                     {
-                        if (reversingNumber.Peek() != '.')
-                        {
-                            currentInteger += reversingNumber.Pop() - '0';
-                        }
-                        else
-                        {
-                            currentInteger += reversingNumber.Pop();
-                        }
-
+                        currentInteger += reversingNumber.Pop() - '0';
                     }
-                   
-                    operands.Push(Convert.ToDouble(currentInteger));
+                    else
+                    {
+                        currentInteger += reversingNumber.Pop();
+                    }
 
-                    break;
+                }
+                convertedStackNumber = Convert.ToDouble(currentInteger);
 
-                case false:
+                if (int.IsOddInteger(signCount))
+                {
+                    convertedStackNumber = -convertedStackNumber;
+                }
+                operands.Push(convertedStackNumber);
 
+            }
+            
+            else
+            {
                     double[] operationOperands = new double[2];
                     operationOperands[0] = operands.Pop();
                     operationOperands[1] = operands.Pop();
@@ -120,7 +131,7 @@ public partial class App : Application
 
                             for (int i = 1; i < operationOperands[1]; i++)
                             {
-                                exponentResponse =+ exponentResponse * operationOperands[0];
+                                exponentResponse = +exponentResponse * operationOperands[0];
                             }
                             operands.Push(exponentResponse);
 
@@ -135,6 +146,10 @@ public partial class App : Application
                             break;
 
                         case '/':
+                            if (operationOperands[1] == 0)
+                            {
+                                throw new InvalidDivisionException("Cannot Devide by zero");
+                            }
                             currentAnswer = operationOperands[0] / operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;
@@ -145,20 +160,20 @@ public partial class App : Application
                             currentAnswer = operationOperands[0] + operationOperands[1];
                             operands.Push(currentAnswer);
                             currentAnswer = 0;
-                            
+
                             break;
 
                         case '-':
                             currentAnswer = operationOperands[0] - operationOperands[1];
                             operands.Push(currentAnswer);
-                            currentAnswer = 0;                           
+                            currentAnswer = 0;
                             break;
 
                     }
 
                     break;
 
-            }
+                }
         }
         finalAnswer = operands.Pop();
         return finalAnswer;
@@ -166,13 +181,10 @@ public partial class App : Application
 
     static public bool Answer_Formatter(double calculationAnswer)
     {
-        long integerPart = (long) calculationAnswer;
-        double decimalPart = calculationAnswer - integerPart;
 
-        string evaluativeInteger = integerPart.ToString();
-        string evaluativeDecimal = decimalPart.ToString();
+        string evaluativeAnswer = calculationAnswer.ToString();
 
-        if (evaluativeDecimal.Length - 1 + evaluativeInteger.Length < 11)
+        if (evaluativeAnswer.Length < 11)
         {
             return true;
         }
@@ -182,6 +194,12 @@ public partial class App : Application
         }
             
 
+    }
+    public class InvalidDivisionException : Exception
+    {
+        public InvalidDivisionException() : base() { }
+        public InvalidDivisionException(string message) : base("Cannot devide by zero") { }
+        public InvalidDivisionException(string message, Exception inner) : base("Cannot Devide by Zero", null) { }
     }
 
 }   

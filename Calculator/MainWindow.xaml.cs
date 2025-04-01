@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     Stack<char> completeExpression = new Stack<char>();
     Queue<char> currentInput = new Queue<char>();
     Boolean answerFlag = false;
+    Boolean signFlag = false;
     double lastAnswer = 0;
     private void one_Click(object sender, RoutedEventArgs e)
     {
@@ -139,6 +140,10 @@ public partial class MainWindow : Window
             {
                 calculatorInput.Text = "Syntax Error";
             }
+            catch (App.InvalidDivisionException)
+            {
+                calculatorInput.Text = "Division by 0";
+            }
             
             answerFlag = true;
         }
@@ -162,7 +167,7 @@ public partial class MainWindow : Window
 
     private void invertSign_Click(object sender, RoutedEventArgs e)
     {
-
+        Add_Sign_Inversion('~');
     }
 
     private void Add_Operand(char pressedButton)
@@ -187,5 +192,23 @@ public partial class MainWindow : Window
             calculatorInput.Text += pressedButton;
         }
        
+    }
+    private void Add_Sign_Inversion(char invert)
+    {
+        if (!answerFlag)
+        {
+            currentInput.Enqueue(invert);
+        }
+        if (!signFlag)
+        {
+            signFlag = !signFlag;
+            calculatorInput.Text = calculatorInput.Text.Insert(0, "-");
+        }
+        else
+        {
+            signFlag = !signFlag;
+            calculatorInput.Text = calculatorInput.Text.TrimStart('-');
+        }
+        return;
     }
 }
